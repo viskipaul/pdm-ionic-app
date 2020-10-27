@@ -22,15 +22,21 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import CarEdit from "./car/CarEdit";
+import {CarProvider} from "./car/CarProvider";
 
 const App: React.FC = () => (
   <IonApp>
+      <CarProvider>
     <IonReactRouter>
       <IonRouterOutlet>
         <Route path="/cars" component={CarList} exact={true} />
+        <Route path="/car" component={CarEdit} exact={true} />
+        <Route path="/car/:id" component={CarEdit} exact={true} />
         <Route exact path="/" render={() => <Redirect to="/cars" />} />
       </IonRouterOutlet>
     </IonReactRouter>
+      </CarProvider>
   </IonApp>
 );
 
