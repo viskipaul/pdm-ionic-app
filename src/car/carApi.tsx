@@ -1,43 +1,46 @@
 import axios from 'axios';
-import{getLogger} from '../core';
+import{getLogger, authConfig, baseUrl, withLogs} from '../core';
 import{CarProps} from "./CarProps";
 
-const log = getLogger('carApi');
 
-const baseUrl = 'http://192.168.0.163:3000';
-const carUrl = `${baseUrl}/car`;
+const carUrl = `http://${baseUrl}/api/item`;
 
-interface ResponseProps<T> {
-    data: T;
+export const getCars: (token: string, limit: number) => Promise<CarProps[]> = (token, limit) => {
+    return withLogs(axios.get(carUrl + '?limit=' + limit, authConfig(token)), 'getCars');
 }
 
-function withLogs<T>(promise: Promise<ResponseProps<T>>, fnName: string): Promise<T>{
-    log(`${fnName} - started`);
-    return promise
-        .then(res =>{
-            log(`${fnName} - succeeded`);
-            return Promise.resolve(res.data);
-        })
-        .catch(err => {
-            log(`${fnName} - failed`);
-            return Promise.reject(err);
-        });
+export const createCar: (token: string, car: CarProps) => Promise<CarProps[]> = (token, car) => {
+    return withLogs(axios.post(carUrl, car, authConfig(token)), 'createCar');
 }
 
-const config = {
-    headers:{
-        'Content-Type': 'application/json'
+export const updateCar: (token: string, car: CarProps) => Promise<CarProps[]> = (token, car) =>{
+    return withLogs(axios.put(`${carUrl}/${car._id}`, car, authConfig(token)), 'updateCar');
+}
+
+interface MessageData {
+    type: string,
+    payload: CarProps;
+}
+
+const log = getLogger('ws')
+export const newWebSocket = (token:string, onMessage: (data: MessageData) => void) => {
+    const ws = new WebSocket(`ws://${baseUrl}`);
+    ws.onopen = () => {
+        log('web socket onopen');
+        ws.send(JSON.stringify({type: 'authorization', payload: {token}}));
+    };
+    ws.onclose = () => {
+        log('web socket onclose');
+    };
+    ws.onerror = error => {
+        log('web socket onerror', error);
+    };
+    ws.onmessage = messageEvent => {
+        log('web socket onmessage');
+        onMessage(JSON.parse(messageEvent.data));
+    };
+    return () => {
+        ws.close();
     }
-};
-
-export const getCars: () => Promise<CarProps[]> = () => {
-    return withLogs(axios.get(carUrl, config), 'getCars');
 }
 
-export const createCar: (car: CarProps) => Promise<CarProps[]> = car => {
-    return withLogs(axios.post(carUrl, car, config), 'createCar');
-}
-
-export const updateCar: (car: CarProps) => Promise<CarProps[]> = car =>{
-    return withLogs(axios.put(`${carUrl}/${car.id}`, car, config), 'updateCar');
-}

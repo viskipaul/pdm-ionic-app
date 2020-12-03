@@ -1,5 +1,5 @@
 export interface CarProps{
-    id? : string;
+    _id? : string;
     model : string;
     year : string;
 }

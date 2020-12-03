@@ -29,7 +29,7 @@ const CarEdit: React.FC<CarEditProps> = ({ history, match }) => {
     useEffect(() => {
         log('useEffect');
         const routeId = match.params.id || '';
-        const car = cars?.find(it => it.id === routeId);
+        const car = cars?.find(it => it._id === routeId);
         setCar(car);
         if (car) {
             setModel(car.model);
@@ -60,7 +60,7 @@ const CarEdit: React.FC<CarEditProps> = ({ history, match }) => {
                 </IonItem>
                 <IonItem>
                     <IonLabel position="floating">Year</IonLabel>
-                    <IonInput value={year} onIonChange={e => setYear(e.detail.value || '')} />
+                    <IonInput value={year} onIonChange={e => setYear(e.detail.value || '')}/>
                 </IonItem>
                 <IonLoading isOpen={saving} />
                 {savingError && (

@@ -1,9 +1,10 @@
 import {
+    IonButton,
     IonContent,
     IonFab,
     IonFabButton,
     IonHeader,
-    IonIcon, IonList,
+    IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonList,
     IonLoading,
     IonPage,
     IonTitle,
@@ -15,25 +16,33 @@ import {add} from 'ionicons/icons'
 import {getLogger} from "../core";
 import {RouteComponentProps} from "react-router";
 import {CarContext} from "./CarProvider";
+import {AuthContext} from '../auth';
 
 const log = getLogger('CarList')
 
 const CarList: React.FC<RouteComponentProps> = ({history}) => {
-    const {cars, fetching, fetchingError} = useContext(CarContext);
+    const {cars, fetching, fetchingError, getNext, disableInfiniteScroll} = useContext(CarContext);
+    const {logout} = useContext(AuthContext);
+
+    const handleLogout = () => {
+        logout?.();
+    }
     log('CarList render')
 
+    
     return(
         <IonPage>
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Cars</IonTitle>
+                    <IonButton className="logoutbutton" onClick={handleLogout}>Logout</IonButton>
                 </IonToolbar>
             </IonHeader>
             <IonContent>
                 <IonLoading isOpen={fetching} message={"Fetching items..."}/>
                 {cars && (
                     <IonList>
-                        {cars.map(({id, model, year}) => <Car key={id} id={id} model={model} year={year}
+                        {cars.map(({_id, model, year}) => <Car key={_id} _id={_id} model={model} year={year}
                         onEdit={id => history.push(`/car/${id}`)} />)}
                     </IonList>
                 )}
@@ -45,6 +54,9 @@ const CarList: React.FC<RouteComponentProps> = ({history}) => {
                         <IonIcon icon={add}/>
                     </IonFabButton>
                 </IonFab>
+                <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll} onIonInfinite={(e: CustomEvent<void>) => getNext?.(e, cars)}>
+                    <IonInfiniteScrollContent loadingText="Loading more cars..."></IonInfiniteScrollContent>
+                </IonInfiniteScroll>
             </IonContent>
         </IonPage>
     );

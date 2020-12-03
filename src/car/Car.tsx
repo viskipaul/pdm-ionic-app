@@ -3,12 +3,12 @@ import { CarProps } from "./CarProps";
 import {IonItem, IonLabel} from "@ionic/react";
 
 interface CarPropsExt extends CarProps{
-    onEdit: (id?: string) => void;
+    onEdit: (_id?: string) => void;
 }
 
-const Car : React.FC<CarPropsExt> = ({ id, model, year, onEdit }) => {
+const Car : React.FC<CarPropsExt> = ({ _id, model, year, onEdit }) => {
     return(
-        <IonItem onClick={() => onEdit(id)}>
+        <IonItem onClick={() => onEdit(_id)}>
             <IonLabel>{model}</IonLabel>
         </IonItem>
     );

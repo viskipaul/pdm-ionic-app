@@ -230,3 +230,9 @@ http://ionicframework.com/docs/theming/ */
     --ion-card-background: #1e1e1e;
   }
 }
+
+.logoutbutton{
+  position: Absolute;
+  right: 3px;
+  top: 3px;
+}
