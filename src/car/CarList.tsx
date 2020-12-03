@@ -7,10 +7,11 @@ import {
     IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonList,
     IonLoading,
     IonPage,
+    IonSearchbar,
     IonTitle,
     IonToolbar
 } from "@ionic/react";
-import React, {useContext} from 'react'
+import React, {useContext, useState} from 'react'
 import Car from './Car'
 import {add} from 'ionicons/icons'
 import {getLogger} from "../core";
@@ -23,6 +24,7 @@ const log = getLogger('CarList')
 const CarList: React.FC<RouteComponentProps> = ({history}) => {
     const {cars, fetching, fetchingError, getNext, disableInfiniteScroll} = useContext(CarContext);
     const {logout} = useContext(AuthContext);
+    const [searchCar, setSearchCar] = useState<string>('');
 
     const handleLogout = () => {
         logout?.();
@@ -40,9 +42,12 @@ const CarList: React.FC<RouteComponentProps> = ({history}) => {
             </IonHeader>
             <IonContent>
                 <IonLoading isOpen={fetching} message={"Fetching items..."}/>
+                <IonSearchbar value={searchCar} debounce={500} onIonChange={e => setSearchCar(e.detail.value!)}></IonSearchbar>
                 {cars && (
                     <IonList>
-                        {cars.map(({_id, model, year}) => <Car key={_id} _id={_id} model={model} year={year}
+                        {cars
+                        .filter(({_id, model, year}) => model.indexOf(searchCar) >= 0)
+                        .map(({_id, model, year}) => <Car key={_id} _id={_id} model={model} year={year}
                         onEdit={id => history.push(`/car/${id}`)} />)}
                     </IonList>
                 )}
