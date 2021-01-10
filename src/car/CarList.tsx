@@ -11,13 +11,15 @@ import {
     IonTitle,
     IonToolbar
 } from "@ionic/react";
-import React, {useContext, useState} from 'react'
+import React, {useContext, useState, useEffect} from 'react'
 import Car from './Car'
 import {add} from 'ionicons/icons'
 import {getLogger} from "../core";
 import {RouteComponentProps} from "react-router";
 import {CarContext} from "./CarProvider";
 import {AuthContext} from '../auth';
+import { createAnimation } from '@ionic/react';
+import { InfoModal } from "../info/InfoModal";
 
 const log = getLogger('CarList')
 
@@ -38,6 +40,7 @@ const CarList: React.FC<RouteComponentProps> = ({history}) => {
                     <IonTitle>Cars</IonTitle>
                     <IonButton className="homeButton" routerLink="/cars">Home</IonButton>
                     <IonButton className="photosButton" routerLink="/photos">Photo Gallery</IonButton>
+                    <InfoModal/>
                     <IonButton className="logoutbutton" onClick={handleLogout}>Logout</IonButton>
                 </IonToolbar>
             </IonHeader>

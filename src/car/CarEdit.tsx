@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
+    createAnimation,
     IonButton,
     IonButtons,
     IonCol,
@@ -33,6 +34,8 @@ interface CarEditProps extends RouteComponentProps<{
 }> {}
 
 const CarEdit: React.FC<CarEditProps> = ({ history, match }) => {
+    useEffect(groupAnimation, []);
+    useEffect(chainAnimation, []);
     const { cars, saving, savingError, saveCar } = useContext(CarContext);
     const [model, setModel] = useState('');
     const [year, setYear] = useState('');
@@ -75,7 +78,13 @@ const CarEdit: React.FC<CarEditProps> = ({ history, match }) => {
     const handleSave = () => {
         let newId: string = '-1';
         const editedItem = car ? { ...car, model, year, latitude, longitude, image:currentPhotoName } : {id:newId, model:model, year:year, latitude:latitude, longitude:longitude, image:currentPhotoName };
-        saveCar && saveCar(editedItem).then(() => history.goBack());
+        if(model === '')
+            console.log('Model empty');
+            shakeModelInput();
+        if(year === '')
+            shakeYearInput();
+        if(model !== '' && year !== '')
+            saveCar && saveCar(editedItem).then(() => history.goBack());
     };
     log('render');
     return (
@@ -93,14 +102,24 @@ const CarEdit: React.FC<CarEditProps> = ({ history, match }) => {
             <IonContent>
                 <IonItem>
                     <IonLabel position="floating">Model</IonLabel>
-                    <IonInput value={model} onIonChange={e => setModel(e.detail.value || '')} />
+                    <IonInput className="modelInput" value={model} onIonChange={e => setModel(e.detail.value || '')} />
                 </IonItem>
                 <IonItem>
                     <IonLabel position="floating">Year</IonLabel>
-                    <IonInput value={year} onIonChange={e => setYear(e.detail.value || '')}/>
+                    <IonInput className="yearInput" value={year} onIonChange={e => setYear(e.detail.value || '')}/>
                 </IonItem>
                 <IonLoading isOpen={saving} />
                 <IonGrid>
+                    <IonRow>
+                        <IonCol>
+                        {
+                            !model && <div className="modelError"><p>Please enter model!</p></div>
+                        }
+                        {
+                            !year && <div className="yearError"><p>Please enter year!</p></div>
+                        }
+                        </IonCol>
+                    </IonRow>
                     <IonRow>
                         <IonCol>
                             <MyMap lat={latitude} lng={longitude} onMapClick={log('onMap')} onMarkerClick={log('onMarker')}/>
@@ -114,8 +133,12 @@ const CarEdit: React.FC<CarEditProps> = ({ history, match }) => {
                 {savingError && (
                     <div>{savingError.message || 'Failed to save item'}</div>
                 )}
-                <div>Selected latitude: {latitude}</div>
-                <div>Selected longitude: {longitude}</div>
+                <div className="container">
+                    <div className="groupAnimation">
+                        <p className="group1">Selected latitude: {latitude}</p>
+                        <p className="group2">Selected longitude: {longitude}</p>
+                    </div>
+                </div>
                 
                 <IonFab vertical="bottom" horizontal="center" slot="fixed">
                     <IonFabButton onClick={() => takePhoto()}>
@@ -132,6 +155,79 @@ const CarEdit: React.FC<CarEditProps> = ({ history, match }) => {
             setLongitude(l.latLng.lng());
             return l};
     }
+
+    function shakeModelInput(){
+        const el = document.querySelector('.modelError');
+        if(el){
+            const animation = createAnimation()
+            .addElement(el)
+            .duration(100)
+            .direction('normal')
+            .iterations(1)
+            .keyframes([
+                {offset: 0, transform:'translateX(0)'},
+                {offset: 0.125, transform:'translateX(-15px)'},
+                {offset: 0.375, transform:'translateX(12px)'},
+                {offset: 0.625, transform:'translate(-8px)'},
+                {offset: 0.875, transform:'translate(7px)'},
+                {offset: 1, transform:'translate(0)'}
+            ]);
+        animation.play();
+        }
+    }
+
+    function shakeYearInput(){
+        const el = document.querySelector('.yearError');
+        if(el){
+            const animation = createAnimation()
+            .addElement(el)
+            .duration(100)
+            .direction('normal')
+            .iterations(1)
+            .keyframes([
+                {offset: 0, transform:'translateX(0)'},
+                {offset: 0.125, transform:'translateX(-15px)'},
+                {offset: 0.375, transform:'translateX(12px)'},
+                {offset: 0.625, transform:'translate(-8px)'},
+                {offset: 0.875, transform:'translate(7px)'},
+                {offset: 1, transform:'translate(0)'}
+            ]);
+        animation.play();
+        }
+    }
+
+    function groupAnimation(){
+        const el1 = document.querySelector('.group1');
+        const el2 = document.querySelector('.group2');
+        if(el1 && el2){
+            const anim1 = createAnimation().addElement(el1).direction('alternate').iterations(Infinity).fromTo('transform', 'scale(1)', 'scale(1.5)');
+            const anim2 = createAnimation().addElement(el2).direction('alternate').iterations(Infinity).fromTo('transform', 'scale(1)', 'scale(0.5)');
+            const parentAnimation = createAnimation().duration(500).addAnimation([anim1, anim2]);
+            parentAnimation.play();
+        }
+    }
+
+    function chainAnimation(){
+        const el1 = document.querySelector('.modelInput');
+        const el2 = document.querySelector('.yearInput');
+        if(el1 && el2){
+            const anim1 = createAnimation().addElement(el1).duration(500).keyframes([
+                {offset: 0, transform: 'translateX(0)'},
+                {offset: 0.5, transform: 'translateX(15px)'},
+                {offset: 1, transform: 'translateX(0)'}
+            ]);
+            const anim2 = createAnimation().addElement(el2).duration(500).keyframes([
+                {offset: 0, transform: 'translateX(0)'},
+                {offset: 0.5, transform: 'translateX(15px)'},
+                {offset: 1, transform: 'translateX(0)'}
+            ]);
+            (async () => {
+                await anim1.play();
+                await anim2.play();
+            })();
+        }
+    }
+
 };
 
 export default CarEdit;

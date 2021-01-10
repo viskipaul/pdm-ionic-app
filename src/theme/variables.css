@@ -253,3 +253,28 @@ http://ionicframework.com/docs/theming/ */
   width: 50%;
   height: 50%;
 }
+
+.container{
+  display: flex;
+  flex-direction: column;
+  justify-content:flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.modelError{
+  color: red;
+  font-size: larger;
+}
+
+.yearError{
+  color: red;
+  font-size: larger;
+}
+
+.openInfoButton{
+  position: absolute;
+  left: 465px;
+  top: 3px;
+}
