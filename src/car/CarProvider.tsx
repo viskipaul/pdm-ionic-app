@@ -154,7 +154,15 @@ export const CarProvider: React.FC<CarProviderProps> = ({ children }) => {
         try {
             log('saveItem started');
             dispatch({ type: SAVE_ITEM_STARTED });
-            const savedCar = await (car._id ? updateCar(token, car) : createCar(token, car));
+
+            let savedCar;
+            if(car._id && cars && + car._id === -1){
+                savedCar = await(createCar(token, car))
+            }
+            else{
+                savedCar = await(updateCar(token, car));
+            }
+            
             log('saveItem succeeded');
             dispatch({ type: SAVE_ITEM_SUCCEEDED, payload: { car: savedCar } });
         } catch (error) {

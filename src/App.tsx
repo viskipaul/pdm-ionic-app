@@ -3,6 +3,7 @@ import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { CarList, CarEdit } from './car'
+import { PhotosHome } from './photos'
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 
@@ -34,6 +35,7 @@ const App: React.FC = () => (
                         <PrivateRoute path="/cars" component={CarList} exact={true}/>
                         <PrivateRoute path="/car" component={CarEdit} exact={true}/>
                         <PrivateRoute path="/car/:id" component={CarEdit} exact={true}/>
+                        <PrivateRoute path="/photos" component={PhotosHome} exact={true}/>
                     </CarProvider>
                     <Route exact path="/" render={() => <Redirect to="/cars"/>}/>
                 </AuthProvider>

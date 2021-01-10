@@ -236,3 +236,20 @@ http://ionicframework.com/docs/theming/ */
   right: 3px;
   top: 3px;
 }
+
+.homeButton{
+  position: Absolute;
+  left: 220px;
+  top: 3px;
+}
+
+.photosButton{
+  position: Absolute;
+  left: 300px;
+  top: 3px;
+}
+
+.carimage{
+  width: 50%;
+  height: 50%;
+}

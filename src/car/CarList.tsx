@@ -31,12 +31,13 @@ const CarList: React.FC<RouteComponentProps> = ({history}) => {
     }
     log('CarList render')
 
-    
     return(
         <IonPage>
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Cars</IonTitle>
+                    <IonButton className="homeButton" routerLink="/cars">Home</IonButton>
+                    <IonButton className="photosButton" routerLink="/photos">Photo Gallery</IonButton>
                     <IonButton className="logoutbutton" onClick={handleLogout}>Logout</IonButton>
                 </IonToolbar>
             </IonHeader>
@@ -47,7 +48,7 @@ const CarList: React.FC<RouteComponentProps> = ({history}) => {
                     <IonList>
                         {cars
                         .filter(({_id, model, year}) => model.indexOf(searchCar) >= 0)
-                        .map(({_id, model, year}) => <Car key={_id} _id={_id} model={model} year={year}
+                        .map(({_id, model, year, latitude, longitude, image}) => <Car key={_id} _id={_id} model={model} year={year} latitude={latitude} longitude={longitude} image={image}
                         onEdit={id => history.push(`/car/${id}`)} />)}
                     </IonList>
                 )}
@@ -59,7 +60,7 @@ const CarList: React.FC<RouteComponentProps> = ({history}) => {
                         <IonIcon icon={add}/>
                     </IonFabButton>
                 </IonFab>
-                <IonInfiniteScroll threshold="100px" disabled={disableInfiniteScroll} onIonInfinite={(e: CustomEvent<void>) => getNext?.(e, cars)}>
+                <IonInfiniteScroll threshold="5px" disabled={disableInfiniteScroll} onIonInfinite={(e: CustomEvent<void>) => getNext?.(e, cars)}>
                     <IonInfiniteScrollContent loadingText="Loading more cars..."></IonInfiniteScrollContent>
                 </IonInfiniteScroll>
             </IonContent>
